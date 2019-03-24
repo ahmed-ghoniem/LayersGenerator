@@ -10,42 +10,58 @@ namespace Generator
 
 		private static void Main(string[] args)
 		{
-			string path = AppDomain.CurrentDomain.BaseDirectory;
-			Console.WriteLine(path);
 			FileHelper fileHelper = new FileHelper();
-			PluralizationHelper ph = new PluralizationHelper();
+			PluralizationHelper pluralizationHelper = new PluralizationHelper();
+			
+			//get Current Domain Path
+			string path = AppDomain.CurrentDomain.BaseDirectory;
+		
+			//Read XML template String
 			string fileContents = fileHelper.ReadFile(path, "Model.XML");
+
+			//Load XML template model 
 			XMLHelper xmlHelper = new XMLHelper();
 			Model.Model model = xmlHelper.DeserializeText<Model.Model>(fileContents);
 			Console.WriteLine("Please Enter Model Name");
-			string className=Console.ReadLine();
-			//string ModelName = "User";
-			string ModelName = className;
-			string instanceModel = ph. GetInstanceName(ModelName);
+			string modelName = Console.ReadLine();
+			string instanceModel = pluralizationHelper.GetInstanceName(modelName);
 			string BaseModelName = "BaseModel";
 			string PKType = "int";
 
+			//Loop for each template item
 			foreach (Item item in model.Items)
 			{
 				string contents = item.Class;
+				//replace items
 				contents = contents.Replace("{NameSpace}", item.NameSpace);
-				contents = contents.Replace("{ModelName}", ModelName);
+				contents = contents.Replace("{ModelName}", modelName);
 				contents = contents.Replace("{ModelNameSpace}", "Model");
-				contents = contents.Replace("{ModelNamePluralized}", ph.Pluralize(ModelName));
+				contents = contents.Replace("{ModelNamePluralized}", pluralizationHelper.Pluralize(modelName));
 				contents = contents.Replace("{PKType}", PKType);
 				contents = contents.Replace("{BaseModelName}", BaseModelName);
 				contents = contents.Replace("{instanceModel}", instanceModel);
-				contents = ArrangeUsingRoslyn(contents);
-				fileHelper.SaveFileToDisk(contents, path, item.FolderName, item.Prefix + ModelName + item.Suffix + ".cs");
+
+				//prettify cs code
+				contents = PrettifyRoslyn(contents);
+			
+				//save file to disk
+				fileHelper.SaveFileToDisk(contents, path, item.FolderName, item.Prefix + modelName + item.Suffix + ".cs");
 			}
-			//Console.ReadLine();
+			Console.WriteLine("All Done ");
+			Console.ReadLine();
 		}
-		public static string ArrangeUsingRoslyn(string csCode)
+
+		/// <summary>
+		/// Arrange Using Roslyn
+		/// </summary>
+		/// <param name="csCode">csCode string</param>
+		/// <returns></returns>
+		private static string PrettifyRoslyn(string csCode)
 		{
-			var tree = CSharpSyntaxTree.ParseText(csCode);
-			var root = tree.GetRoot().NormalizeWhitespace();
-			var ret = root.ToFullString();
-			return ret;
+			SyntaxTree tree = CSharpSyntaxTree.ParseText(csCode);
+			SyntaxNode root = tree.GetRoot().NormalizeWhitespace();
+			string response = root.ToFullString();
+			return response;
 		}
 	}
 }
