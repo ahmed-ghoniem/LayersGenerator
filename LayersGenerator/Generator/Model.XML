@@ -1,0 +1,190 @@
+<Model>
+	<Items>
+		<Item>
+			<FolderName>Model</FolderName>
+			<NameSpace>Model</NameSpace>
+			<Class>
+				using System.Collections.Generic;
+				namespace {NameSpace}
+				{
+					public class {ModelName} : {BaseModelName}
+					{
+						public {PKType} {ModelName}ID { get; set; }						   
+						
+            public {ModelName}()
+						{
+						}
+					}
+				}
+			</Class>
+		</Item>
+		<Item>
+			<FolderName>DTO</FolderName>
+			<NameSpace>DTO</NameSpace>
+			<Suffix>DTO</Suffix>
+			<Class>
+				using System.Collections.Generic;
+				namespace {NameSpace}
+				{
+					public class {ModelName}DTO
+					{
+						public {PKType} {ModelName}ID { get; set; }	
+					   
+						public {ModelName}()
+						{
+						}
+					}
+				}
+			</Class>
+		</Item>
+		<Item>
+			<FolderName>Configuration</FolderName>
+			<NameSpace>Data.Configuration</NameSpace>
+			<Suffix>Configuration</Suffix>
+			<Prefix></Prefix>
+			<Class>
+				using {ModelNameSpace};
+				using System;
+				using System.Collections.Generic;
+				using System.ComponentModel.DataAnnotations.Schema;
+				using System.Data.Entity.Infrastructure.Annotations;
+				using System.Data.Entity.ModelConfiguration;
+				using System.Linq;
+				using System.Text;
+				using System.Threading.Tasks;
+
+				namespace {NameSpace}
+				{
+					public class {ModelName}Configuration: EntityTypeConfiguration&lt;{ModelName}&gt;
+					{
+						public {ModelName}Configuration()
+						{
+							ToTable("{ModelNamePluralized}");
+						}
+					}
+				}
+			</Class>
+		</Item>
+		<Item>
+			<FolderName>Repositories\\Repositories</FolderName>
+			<NameSpace>Data.Repositories</NameSpace>
+			<Suffix>Repository</Suffix>
+			<Prefix></Prefix>
+			<Class>
+				using Data.Infrastructure;
+				using {ModelNameSpace};
+
+				namespace {NameSpace}
+				{
+					public class {ModelName}Repository : BaseRepository&lt;{ModelName}&gt;, I{ModelName}Repository
+					{
+						public {ModelName}Repository(IDbFactory dbFactory) : base(dbFactory)
+						{
+						}
+					}
+				}
+			</Class>
+		</Item>
+		<Item>
+			<FolderName>Repositories\\Contracts</FolderName>
+			<NameSpace>Data.Repositories</NameSpace>
+			<Suffix>Repository</Suffix>
+			<Prefix>I</Prefix>
+			<Class>
+				using Data.Infrastructure;
+				using {ModelNameSpace};
+
+				namespace {NameSpace}
+				{
+					public interface I{ModelName}Repository : IRepository&lt;{ModelName}&gt;
+					{					   
+					}
+				}
+
+			</Class>
+		</Item>
+		<Item>
+			<FolderName>Services\\Contracts</FolderName>
+			<NameSpace>Services</NameSpace>
+			<Suffix>Service</Suffix>
+			<Prefix>I</Prefix>
+			<Class>
+				using {ModelNameSpace};
+				using System.Collections.Generic;
+
+				namespace {NameSpace}
+				{
+					public interface I{ModelName}Service
+					{
+						List&lt;{ModelName}&gt; GetAll();
+						{ModelName} Get{ModelName}(int id);
+						void Create{ModelName}({ModelName} {instanceModel});
+						void Update{ModelName}({ModelName} {instanceModel});
+						void Delete{ModelName}({ModelName} {instanceModel});
+						void Save{ModelName}();
+					}
+				}
+
+			</Class>
+		</Item>
+		<Item>
+			<FolderName>Services\\Services</FolderName>
+			<NameSpace>Services</NameSpace>
+			<Suffix>Service</Suffix>
+			<Prefix></Prefix>
+			<Class>
+			using Data.Infrastructure;
+			using Data.Repository;
+			using {ModelNameSpace};
+			using System.Collections.Generic;
+			using System.Linq;
+
+			namespace {NameSpace}
+			{
+				public class {ModelName}Service : I{ModelName}Service
+				{
+					private readonly I{ModelName}Repository _{instanceModel}Repository;
+					private readonly IUnitOfWork _unitOfWork;
+
+					public I{ModelName}Service(I{ModelName}Repository {instanceModel}Repository,IUnitOfWork unitOfWork)
+					{
+						_{instanceModel}Repository = {instanceModel}Repository;
+           _unitOfWork = unitOfWork;
+					}
+
+					public List&lt;{ModelName}&gt; GetAll()
+					{
+						List&lt;{ModelName}&gt; {ModelNamePluralized} = _{instanceModel}Repository.GetAll();
+						return {ModelNamePluralized};
+					}
+
+					public {ModelName} Get{ModelName}(int id)
+					{
+						{ModelName} {instanceModel} = _{instanceModel}Repository.GetById(id);
+						return {instanceModel};
+					}
+					public void Create{ModelName}({ModelName} {instanceModel})
+					{
+						_{instanceModel}Repository.Add({instanceModel});
+					}
+
+					public void Update{ModelName}({ModelName} {instanceModel})
+					{
+						_{instanceModel}Repository.Update({instanceModel}.{ModelName}ID, {instanceModel});
+					}
+
+					public void Delete{ModelName}({ModelName} {instanceModel})
+					{
+						_{instanceModel}Repository.Delete({instanceModel});
+					}
+					
+					public void Save{ModelName}()
+					{
+            _unitOfWork.Commit();
+					}
+				}
+			}
+			</Class>
+		</Item>
+	</Items>
+</Model>
