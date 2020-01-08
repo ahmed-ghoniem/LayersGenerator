@@ -1,7 +1,8 @@
 <Model>
+  <ModelNameSpace>Models</ModelNameSpace>
   <Items>
     <Item>
-      <FolderName>Model</FolderName>
+      <FolderName>Models</FolderName>
       <NameSpace>Models</NameSpace>
       <Class>
         using System.Collections.Generic;
@@ -141,12 +142,12 @@
         public class {ModelName}Service : I{ModelName}Service
         {
         private readonly I{ModelName}Repository _{instanceModel}Repository;
-        private readonly IUnitOfWork unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
 
         public I{ModelName}Service(I{ModelName}Repository {instanceModel}Repository,IUnitOfWork unitOfWork)
         {
         _{instanceModel}Repository = {instanceModel}Repository;
-        unitOfWork = unitOfWork;
+        _unitOfWork = unitOfWork;
         }
 
         public List&lt;{ModelName}&gt; GetAll()
@@ -177,7 +178,7 @@
 
         public void Save{ModelName}()
         {
-        unitOfWork.Commit();
+         _unitOfWork.Commit();
         }
         }
         }

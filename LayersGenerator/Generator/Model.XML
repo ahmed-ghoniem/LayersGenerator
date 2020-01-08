@@ -1,11 +1,12 @@
 <Model>
-	<Items>
+  <ModelNameSpace>Models</ModelNameSpace>
+  <Items>
 		<Item>
-			<FolderName>Model</FolderName>
-			<NameSpace>Model</NameSpace>
+			<FolderName>Models</FolderName>
+			<NameSpace>Models</NameSpace>
 			<Class>
 				using System.Collections.Generic;
-				namespace {NameSpace}
+				namespace {ModelNameSpace}
 				{
 					public class {ModelName} : {BaseModelName}
 					{

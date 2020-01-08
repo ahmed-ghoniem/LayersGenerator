@@ -16,6 +16,8 @@ namespace Generator.Model
 		[XmlArrayItem("Item")]
 		public List<Item> Items { get; set; }
 
+        public string ModelNameSpace { get; set; }
+
 		public Model()
 		{
 			Items = new List<Item>();
