@@ -17,12 +17,12 @@ namespace Generator
 			string path = AppDomain.CurrentDomain.BaseDirectory;
 		
 			//Read XML template String
-			string fileContents = fileHelper.ReadFile(path, "Model.XML");
+			string fileContents = fileHelper.ReadFile(path, ConfigHelper.TemplateName);
 
 			//Load XML template model 
 			XMLHelper xmlHelper = new XMLHelper();
 			Model.Model model = xmlHelper.DeserializeText<Model.Model>(fileContents);
-			Console.WriteLine("Please Enter Model Name");
+			Console.WriteLine("Please Enter Model Names comma separated");
 			string modelName = Console.ReadLine();
 			string instanceModel = pluralizationHelper.GetInstanceName(modelName);
 			string BaseModelName = "BaseModel";
@@ -52,7 +52,7 @@ namespace Generator
 		}
 
 		/// <summary>
-		/// Arrange Using Roslyn
+		/// Prettify Using Roslyn
 		/// </summary>
 		/// <param name="csCode">csCode string</param>
 		/// <returns></returns>
