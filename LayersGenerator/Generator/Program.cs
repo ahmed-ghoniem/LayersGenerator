@@ -29,7 +29,7 @@ namespace Generator
                 {
                     if (!string.IsNullOrEmpty(item))
                     {
-                        Split(item.Trim(), model, path);
+                        Generate(item.Trim(), model, path);
                     }
                 }
                 Console.WriteLine("All Done ");
@@ -42,7 +42,7 @@ namespace Generator
             Console.ReadLine();
         }
 
-        private static void Split(string modelName, Model.Model model, string path)
+        private static void Generate(string modelName, Model.Model model, string path)
         {
             PluralizationHelper pluralizationHelper = new PluralizationHelper();
             FileHelper fileHelper = new FileHelper();
