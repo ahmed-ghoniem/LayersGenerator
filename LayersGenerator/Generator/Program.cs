@@ -73,11 +73,11 @@ namespace Generator
         }
 
         /// <summary>
-		/// Prettify Using Roslyn
-		/// </summary>
-		/// <param name="csCode">csCode string</param>
-		/// <returns></returns>
-		private static string PrettifyRoslyn(string csCode)
+        /// Prettify Using Roslyn
+        /// </summary>
+        /// <param name="csCode">csCode string</param>
+        /// <returns></returns>
+        private static string PrettifyRoslyn(string csCode)
         {
             SyntaxTree tree = CSharpSyntaxTree.ParseText(csCode);
             SyntaxNode root = tree.GetRoot().NormalizeWhitespace();

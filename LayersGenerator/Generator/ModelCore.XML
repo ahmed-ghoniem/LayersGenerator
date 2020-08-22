@@ -1,5 +1,5 @@
 <Model>
-  <ModelNameSpace>Models</ModelNameSpace>
+  <ModelNameSpace>Model</ModelNameSpace>
   <Items>
     <Item>
       <FolderName>Models</FolderName>
@@ -31,7 +31,7 @@
         {
         public {PKType} {ModelName}ID { get; set; }
 
-        public {ModelName}()
+        public {ModelName}DTO()
         {
         }
         }
@@ -61,7 +61,7 @@
     </Item>
     <Item>
       <FolderName>Repositories\\Repositories</FolderName>
-      <NameSpace>Data.Repositories</NameSpace>
+      <NameSpace>Repositories</NameSpace>
       <Suffix>Repository</Suffix>
       <Prefix></Prefix>
       <Class>
@@ -84,7 +84,7 @@
     </Item>
     <Item>
       <FolderName>Repositories\\Contracts</FolderName>
-      <NameSpace>Data.Repositories</NameSpace>
+      <NameSpace>Repositories</NameSpace>
       <Suffix>Repository</Suffix>
       <Prefix>I</Prefix>
       <Class>
@@ -132,7 +132,7 @@
       <Prefix></Prefix>
       <Class>
         using Data.Infrastructure;
-        using Data.Repository;
+        using Repositories;
         using {ModelNameSpace};
         using System.Collections.Generic;
         using System.Linq;
@@ -142,9 +142,9 @@
         public class {ModelName}Service : I{ModelName}Service
         {
         private readonly I{ModelName}Repository _{instanceModel}Repository;
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly IUOW _unitOfWork;
 
-        public I{ModelName}Service(I{ModelName}Repository {instanceModel}Repository,IUnitOfWork unitOfWork)
+        public {ModelName}Service(I{ModelName}Repository {instanceModel}Repository,IUOW unitOfWork)
         {
         _{instanceModel}Repository = {instanceModel}Repository;
         _unitOfWork = unitOfWork;
@@ -180,6 +180,144 @@
         {
          _unitOfWork.Commit();
         }
+        }
+        }
+      </Class>
+    </Item>
+    <Item>
+      <FolderName>Controllers</FolderName>
+      <NameSpace>PristineAPI.Controllers</NameSpace>
+      <Suffix>Controller</Suffix>
+      <Prefix></Prefix>
+      <Class>
+        using AutoMapper;
+        using DTO;
+        using Helpers;
+        using Infrastructure;
+        using Microsoft.AspNetCore.Mvc;
+        using Model;
+        using Model.DTOs;
+        using Services;
+        using Swashbuckle.AspNetCore.Annotations;
+        using System;
+        using System.Collections.Generic;
+
+
+        namespace {NameSpace}
+        {
+        public class {ModelName}Controller : BaseController
+        {
+        private readonly SecurityHelper _securityHelper;
+        private readonly IMapper _mapper;
+        private readonly IUOW _unitOfWork;
+        private readonly I{ModelName}Service _{instanceModel}Service;
+
+        public {ModelName}Controller(I{ModelName}Service {instanceModel}Service,IUOW unitOfWork , IMapper mapper)
+        {
+        _{instanceModel}Service = {instanceModel}Service;
+        _unitOfWork = unitOfWork;
+        _mapper = mapper;
+        }
+
+        [HttpGet("{id}")]
+        [SwaggerResponse(statusCode: 200, type: typeof(APIResultDTO&lt;{ModelName}DTO&gt;))]
+        public IActionResult Get{ModelName}(int id)
+        {
+        APIResultDTO apiResult = new APIResultDTO();
+        apiResult.Data =  _{instanceModel}Service.Get{ModelName}(id);
+        return Ok(apiResult);
+          }
+
+        [HttpGet("Get{ModelNamePluralized}")]
+        [SwaggerResponse(statusCode: 200, type: typeof(APIResultDTO&lt;List&lt;{ModelName}DTO&gt;&gt;))]
+        public IActionResult Get{ModelNamePluralized}()
+        {
+            APIResultDTO apiResult = new APIResultDTO();
+            apiResult.Data = _{instanceModel}Service.GetAll();
+            return Ok(apiResult);
+        }
+
+        [HttpPost]
+        [SwaggerResponse(statusCode: 200, type: typeof(APIResultDTO&lt;{ModelName}DTO&gt;))]
+        public IActionResult Post{ModelName}([FromBody] {ModelName} {instanceModel})
+        {
+            APIResultDTO apiResult = new APIResultDTO();
+
+            if (ModelState.IsValid)
+            {
+                _{instanceModel}Service.Create{ModelName}({instanceModel});
+                _{instanceModel}Service.SaveChanges();
+                apiResult.Data = {instanceModel};
+            }
+            else
+            {
+                SetValidationErrors(apiResult);
+            }
+
+            return Ok(apiResult);
+        }
+
+
+        [HttpPut("{id}")]
+        [SwaggerResponse(statusCode: 200, type: typeof(APIResultDTO&lt;{ModelName}DTO&gt;))]
+        public IActionResult Put{ModelName}(int id, [FromBody] {ModelName} {instanceModel})
+        {
+            APIResultDTO apiResult = new APIResultDTO();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _{instanceModel}Service.Update{ModelName}({instanceModel});
+                    _{instanceModel}Service.SaveChanges();
+                }
+                catch (Exception ex)
+                {
+                    if (!{ModelName}Exists(id))
+                    {
+                        apiResult.AddError("Not found");
+                    }
+                    else
+                    {
+                        apiResult.AddError(ex.Message);
+                    }
+                }
+            }
+            else
+            {
+                SetValidationErrors(apiResult);
+            }
+
+
+            return Ok(apiResult);
+        }
+
+        [HttpDelete("{id}")]
+        [SwaggerResponse(statusCode: 200, type: typeof(APIResultDTO&lt;{ModelName}DTO&gt;))]
+        public IActionResult Delete{ModelName}(int id)
+        {
+            APIResultDTO apiResult = new APIResultDTO();
+
+        {ModelName} {instanceModel} = _{instanceModel}Service.Get{ModelName}(id);
+            if ({instanceModel} != null)
+            {
+                apiResult.Data = {instanceModel};
+                _{instanceModel}Service.Delete{ModelName}({instanceModel});
+                _{instanceModel}Service.SaveChanges();
+            }
+            else
+            {
+                apiResult.AddError("{ModelName} Not Found");
+            }
+            return Ok(apiResult);
+        }
+
+        private bool {ModelName}Exists(int id)
+        {
+        {ModelName} {instanceModel} = _{instanceModel}Service.Get{ModelName}(id);
+            return {instanceModel} != null;
+        }
+
         }
         }
       </Class>
